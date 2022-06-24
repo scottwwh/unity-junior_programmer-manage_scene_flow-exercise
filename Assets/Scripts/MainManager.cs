@@ -20,10 +20,9 @@ public class MainManager : MonoBehaviour
     private bool m_GameOver = false;
     
     private string Name = "Anonymous";
-    private int HighScore = -1;
 
-    private string BestScoreName = "Eddy Funk";
-    private int BestScorePoints = 10000;
+    private LeaderboardScore BestScoreEver;
+    private LeaderboardScore BestScoreSession;
 
     
     // Start is called before the first frame update
@@ -35,12 +34,23 @@ public class MainManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.Beep();
-            Name = GameManager.Instance.Name;
-            HighScore = GameManager.Instance.HighScore;
+
+            // TODO: Make LeaderboardScore serializable, then load directly
+            BestScoreSession = new LeaderboardScore();
+            BestScoreSession.Name = GameManager.Instance.Name;
+            BestScoreSession.Points = GameManager.Instance.HighScore;
+
+            BestScoreEver = new LeaderboardScore();
         } else {
-            Debug.Log("Skipped directly to the game, cannot retrieve high score and name");
+            Debug.Log("Skipped directly to the game, cannot retrieve high score and name from persistent data");
+            BestScoreEver = new LeaderboardScore();
+
+            BestScoreSession = new LeaderboardScore();
+            BestScoreSession.Name = "Anonymous";
+            BestScoreSession.Points = -1;
         }
 
+        // Update GUI with leaderboard info
         updateScoreText();
         updateBestScoreText();
 
@@ -91,11 +101,11 @@ public class MainManager : MonoBehaviour
     }
 
     void updateScoreText() {
-        ScoreText.text = $"{Name}'s score : {m_Points}";
+        ScoreText.text = $"{BestScoreSession.Name}'s score : {m_Points}";
     }
 
     void updateBestScoreText() {
-        BestScoreText.text = $"{BestScoreName}'s score : {BestScorePoints}";
+        BestScoreText.text = $"{BestScoreEver.Name}'s score : {BestScoreEver.Points}";
     }
 
     public void GameOver()
