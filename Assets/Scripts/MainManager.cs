@@ -12,12 +12,18 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
-    private bool m_Started = false;
     private int m_Points;
-    
+    private bool m_Started = false;
     private bool m_GameOver = false;
+    
+    private string Name = "Anonymous";
+    private int HighScore = -1;
+
+    private string BestScoreName = "Eddy Funk";
+    private int BestScorePoints = 10000;
 
     
     // Start is called before the first frame update
@@ -29,9 +35,14 @@ public class MainManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.Beep();
+            Name = GameManager.Instance.Name;
+            HighScore = GameManager.Instance.HighScore;
         } else {
             Debug.Log("Skipped directly to the game, cannot retrieve high score and name");
         }
+
+        updateScoreText();
+        updateBestScoreText();
 
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -76,7 +87,15 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        updateScoreText();
+    }
+
+    void updateScoreText() {
+        ScoreText.text = $"{Name}'s score : {m_Points}";
+    }
+
+    void updateBestScoreText() {
+        BestScoreText.text = $"{BestScoreName}'s score : {BestScorePoints}";
     }
 
     public void GameOver()
