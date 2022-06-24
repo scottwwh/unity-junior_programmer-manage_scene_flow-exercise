@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// [DefaultExecutionOrder(1000)]
 public class MainManager : MonoBehaviour
 {
     public Brick BrickPrefab;
@@ -20,8 +21,18 @@ public class MainManager : MonoBehaviour
 
     
     // Start is called before the first frame update
+    //
+    // TBD: Is this why the GameManager check below fails?
     void Start()
     {
+        // TBD: How do I access GameManager (or any singleton/monobehaviour/etc) if it isn't attached to a scene?
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.Beep();
+        } else {
+            Debug.Log("Skipped directly to the game, cannot retrieve high score and name");
+        }
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
