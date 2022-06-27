@@ -8,10 +8,6 @@ public class MenuManager : MonoBehaviour
 {
     public InputField NameText;
 
-    private string NameDefault = "Anonymous";
-    private string Name = "";
-
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -25,15 +21,8 @@ public class MenuManager : MonoBehaviour
 
     public void StartNew()
     {
-        // Override default if not set
-        if (NameText.text == "")
-        {
-            Name = NameDefault;
-        } else {
-            Name = NameText.text;
-        }
-
-        GameManager.Instance.Name = Name;
+        // Debug.Log("Initialize session score");
+        GameManager.Instance.InitSessionScore(NameText.text);
 
         SceneManager.LoadScene(1);
     }

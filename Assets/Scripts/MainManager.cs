@@ -19,8 +19,6 @@ public class MainManager : MonoBehaviour
     private bool m_Started = false;
     private bool m_GameOver = false;
     
-    private string Name = "Anonymous";
-
     private LeaderboardScore BestScoreEver;
     private LeaderboardScore BestScoreSession;
 
@@ -33,21 +31,17 @@ public class MainManager : MonoBehaviour
         // TBD: How do I access GameManager (or any singleton/monobehaviour/etc) if it isn't attached to a scene?
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.Beep();
-
-            // TODO: Make LeaderboardScore serializable, then load directly
-            BestScoreSession = new LeaderboardScore();
-            BestScoreSession.Name = GameManager.Instance.Name;
-            BestScoreSession.Points = GameManager.Instance.HighScore;
-
-            BestScoreEver = new LeaderboardScore();
+            BestScoreSession = GameManager.Instance.SessionScore;
+            BestScoreEver = GameManager.Instance.HighScore;
         } else {
             Debug.Log("Skipped directly to the game, cannot retrieve high score and name from persistent data");
             BestScoreEver = new LeaderboardScore();
+            BestScoreEver.Name = "Ed Funk";
+            BestScoreEver.Points = -1;
 
             BestScoreSession = new LeaderboardScore();
             BestScoreSession.Name = "Anonymous";
-            BestScoreSession.Points = -1;
+            BestScoreSession.Points = 0;
         }
 
         // Update GUI with leaderboard info
@@ -112,5 +106,18 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        BestScoreSession.Points = m_Points;
+        if (BestScoreSession.Points > BestScoreEver.Points) {
+            BestScoreEver.Points = BestScoreSession.Points;
+            BestScoreEver.Name = BestScoreSession.Name;
+
+            updateBestScoreText();
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.SaveHighScore();
+            }
+        }
     }
 }
